@@ -1,0 +1,36 @@
+{% extends 'base_page.html' %}
+{% block scripts %}
+function getdata(){
+  $.ajax({
+          url: '/ajax/get_phone_data/',
+          type: 'GET',
+          data: { url: "" },
+          dataType: 'json',
+          success: function (result) {
+            $('#celldatatable').html(result);
+          },
+          cache: false
+      });
+  }
+{% endblock %}
+
+{% block onload %}
+  onload=getdata()
+{% endblock %}
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+
+            <div id="celldatatable"></div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

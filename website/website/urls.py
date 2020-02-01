@@ -15,7 +15,19 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+#pages
+from web.views import base_page , test , cell_phone
+#functions
+from web.views import getproductprice , getbutton , get_phone_data
+
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+    url(r'^$', base_page),
+    url(r'^test/', test),
+    url(r'^cell_phone/', cell_phone),
+
+    url(r'^ajax/getproductprice/$', getproductprice),
+    url(r'^ajax/getbutton/$', getbutton),
+    url(r'^ajax/get_phone_data/$', get_phone_data),
+
 ]
