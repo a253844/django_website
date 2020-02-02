@@ -37,7 +37,7 @@ class get_sogi_data(object):
 
         products_urls = []
 
-        for j in range(len(brands_urls[:1])):
+        for j in range(len(brands_urls[:])):
             resp = requests.get(self.query_url + brands_urls[j][1], headers=headers)
 
             resp.encoding = 'UTF-8'
@@ -47,7 +47,7 @@ class get_sogi_data(object):
             products = resp.find_all("div" , class_='mix-item col-6 col-sm-3 col-lg-2 cat2 price4 fcellphone' )
             products = products_hot+products
 
-            for i in range(len(products)):
+            for i in range(len(products[:5])):
                 onsale_product = []
                 onsale_product.append(j)
                 products_top = products[i].find('span',class_="badge badge-danger pos-a-lt ml-3 mt-3")

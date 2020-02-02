@@ -1,21 +1,48 @@
 {% extends 'base_page.html' %}
 {% block scripts %}
-function getdata(){
+function getbrandsdata(){
+  $.ajax({
+          url: '/ajax/get_brands/',
+          type: 'GET',
+          data: { url: "" },
+          dataType: 'json',
+          success: function (result) {
+            $('#brandsdata').html(result);
+          },
+          cache: false
+      });
+}
+function getdatatable(obj){
+  $('#celldatatable').empty();
+  var brand_name = obj.value;
+  //alert(brand_name);
   $.ajax({
           url: '/ajax/get_phone_data/',
           type: 'GET',
-          data: { url: "" },
+          data: { brand_name: brand_name },
           dataType: 'json',
           success: function (result) {
             $('#celldatatable').html(result);
           },
           cache: false
       });
-  }
+}
+function getnewdata(){
+  $.ajax({
+          url: '/ajax/get_new_celllp_data/',
+          type: 'GET',
+          data: { url: "" },
+          dataType: 'json',
+          success: function (result) {
+            alert(result);
+          },
+          cache: false
+      });
+}
 {% endblock %}
 
 {% block onload %}
-  onload=getdata()
+  onload=getbrandsdata()
 {% endblock %}
 
 {% block content %}
@@ -23,6 +50,11 @@ function getdata(){
     <div class="card shadow mb-4">
       <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+      </div>
+      <div class="card-header py-3">
+
+        <div id="brandsdata"></div>
+
       </div>
       <div class="card-body">
         <div class="table-responsive">
@@ -32,5 +64,9 @@ function getdata(){
         </div>
       </div>
     </div>
+    <div class="card-header py-3">
+        <button class="btn btn-primary" onclick="getnewdata()">updata</button>
+    </div>
   </div>
+  
 {% endblock %}

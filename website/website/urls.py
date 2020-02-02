@@ -18,7 +18,7 @@ from django.contrib import admin
 #pages
 from web.views import base_page , test , cell_phone
 #functions
-from web.views import getproductprice , getbutton , get_phone_data
+from web.views import getproductprice , getbutton , get_phone_data , get_new_celllp_data , get_brands
 
 
 urlpatterns = [
@@ -29,5 +29,7 @@ urlpatterns = [
     url(r'^ajax/getproductprice/$', getproductprice),
     url(r'^ajax/getbutton/$', getbutton),
     url(r'^ajax/get_phone_data/$', get_phone_data),
+    url(r'^ajax/get_new_celllp_data/$', get_new_celllp_data),
+    url(r'^ajax/get_brands/$', get_brands),
 
 ]

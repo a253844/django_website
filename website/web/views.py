@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response
 import json , re , requests
 from django.http import JsonResponse
 from function.crawler_cellphone import get_sogi_data
+from django.db import connection
 # Create your views here.
 def base_page(request):
 	return render_to_response('base_page.html',locals())
@@ -40,7 +41,42 @@ def getbutton(request):
 
     return JsonResponse(quary_data,safe=False)
 
+def get_brands(request):
+	with connection.cursor() as cursor:
+		cursor.execute("select brands from main_brands")
+		getdata=[item for item in cursor.fetchall()]
+	connection.close()
+	
+	brand_data = ""
+	for i in  range(len(getdata)) :
+		brand_data += "<button class=\"btn btn-primary\" onclick=\"getdatatable(this)\" value=\""+getdata[i][0]+"\">"
+		brand_data +="<td>"+getdata[i][0]+"</td>"
+		brand_data +="</button> "
+
+	return JsonResponse(brand_data,safe=False)
+
 def get_phone_data (request):
+	brand_name = request.GET.get('brand_name',None)
+
+	with connection.cursor() as cursor:
+		cursor.execute("select * from product where  brands_ID = (select id from main_brands where brands ='"+brand_name+"')")
+		dbdata_detial=[item for item in cursor.fetchall()]
+	connection.close()
+
+	projects = "<table class=\"table table-bordered\" id=\"dataTable\" width=\"100%\" cellspacing=\"0\">\
+	<thead><tr> <th>名稱</th> <th>price</th> <th>網址</th> </thead> <tbody>"
+	for i in  dbdata_detial :
+		projects +="<tr>"
+		projects +="<td>"+i[2]+"</td>"
+		projects +="<td>"+i[3]+"</td>"
+		projects +="<td>"+i[4]+"</td>"
+		projects +="</tr>"
+
+	projects +="</tbody> </table> "
+	
+	return JsonResponse(projects,safe=False)
+
+def get_new_celllp_data (request):
 	USER_AGENT_VALUE = 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Mobile Safari/537.36'
 	query_url = 'https://www.sogi.com.tw'
 	page_url = '/brands'
@@ -48,14 +84,48 @@ def get_phone_data (request):
 	setdata = get_sogi_data(USER_AGENT_VALUE,query_url,page_url)
 	getdata = setdata.Get_brands_url()
 
-	projects = "<table class=\"table table-bordered\" id=\"dataTable\" width=\"100%\" cellspacing=\"0\">\
-	<thead><tr> <th>名稱</th> <th>網址</th> </thead> <tbody>"
-	for i in  getdata :
-		projects +="<tr>"
-		projects +="<td>"+i[0]+"</td>"
-		projects +="<td>"+i[1]+"</td>"
-		projects +="</tr>"
+	with connection.cursor() as cursor:
+		cursor.execute("select brands from main_brands")
+		dbdata_b=[item for item in cursor.fetchall()]
+	connection.close()
 
-	projects +="</tbody> </table> "
+	meg_act = 0
+	with connection.cursor() as cursor:
+		for i in range(len(getdata)):
+			count = 0
+			for j in range(len(dbdata_b)):
+				if getdata[i][0] == dbdata_b[j][0]:
+					count+=1
+					break
+			if count == 0 :
+				meg_act +=1
+				cursor.execute("insert into main_brands (brands , brands_url) value ('"+getdata[i][0]+"','"+getdata[i][1]+"')")
+		connection.commit()
+	connection.close()
 
-	return JsonResponse(projects,safe=False)
+	getdatadetial = setdata.Get_brands_products(getdata)
+
+	with connection.cursor() as cursor:
+		cursor.execute("select product_name from product")
+		dbdata_p=[item for item in cursor.fetchall()]
+	connection.close()
+
+	with connection.cursor() as cursor:
+		for i in range(len(getdatadetial)):
+			count = 0
+			for j in range(len(dbdata_p)):
+				if getdatadetial[i][1] == dbdata_p[j][0]:
+					count+=1
+					break
+			if count == 0 :
+				meg_act +=1
+				cursor.execute("insert into product (brands_ID , product_name , product_price , product_url) value\
+				("+str(getdatadetial[i][0]+1)+",'"+getdatadetial[i][1]+"','"+getdatadetial[i][2]+"','"+getdatadetial[i][3]+"')")
+		connection.commit()
+	connection.close()
+	if meg_act > 0:
+		message = 'Data already update !!'
+	else:
+		message = "Data is lastest!!"
+
+	return JsonResponse(message,safe=False)
