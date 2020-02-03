@@ -49,7 +49,7 @@ def get_brands(request):
 	
 	brand_data = ""
 	for i in  range(len(getdata)) :
-		brand_data += "<button class=\"btn btn-primary\" onclick=\"getdatatable(this)\" value=\""+getdata[i][0]+"\">"
+		brand_data += "<button style=\" margin-bottom:10px;\" class=\"btn btn-primary\" onclick=\"getdatatable(this)\" value=\""+getdata[i][0]+"\">"
 		brand_data +="<td>"+getdata[i][0]+"</td>"
 		brand_data +="</button> "
 
