@@ -16,15 +16,21 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 #pages
-from web.views import base_page , test , cell_phone
+from web.views import base_page , test , cell_phone , login_page , register_page , logout_page
 #functions
-from web.views import getproductprice , getbutton , get_phone_data , get_new_celllp_data , get_brands
+from web.views import getproductprice , getbutton , get_phone_data , get_new_celllp_data , get_brands , sign_in , sign_up 
 
 
 urlpatterns = [
     url(r'^$', base_page),
     url(r'^test/', test),
     url(r'^cell_phone/', cell_phone),
+    url(r'^login_page/', login_page),
+    url(r'^register_page/', register_page),
+    url(r'^logout_page/', logout_page),
+
+    url(r'^sign_in/', sign_in),
+    url(r'^sign_up/', sign_up),
 
     url(r'^ajax/getproductprice/$', getproductprice),
     url(r'^ajax/getbutton/$', getbutton),

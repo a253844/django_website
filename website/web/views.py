@@ -1,11 +1,15 @@
-from django.shortcuts import render
-from django.shortcuts import render_to_response
+from django.shortcuts import render , render_to_response , redirect
 import json , re , requests
 from django.http import JsonResponse
 from function.crawler_cellphone import get_sogi_data
 from django.db import connection
-# Create your views here.
-def base_page(request):
+from web import models
+
+#-----------------  page  -------------------
+def base_page(request, pid=None ,del_pass=None):
+	if 'username' in request.session:
+		username = request.session['username']
+		useremail = request.session['useremail']
 	return render_to_response('base_page.html',locals())
 
 def cell_phone(request):
@@ -13,6 +17,19 @@ def cell_phone(request):
 
 def test(request):
 	return render_to_response('test.html',locals())
+
+def login_page(request):
+    return render_to_response("login.html",locals())
+
+def register_page(request):
+    return render_to_response("register.html",locals())
+
+def logout_page(request):
+	response = redirect('/')
+	del request.session['username']
+	return response
+
+#----------------- function test ----------------
 
 def getproductprice(request):
 	#url = "https://ecshweb.pchome.com.tw/search/v3.3/all/results?q=ASUS%20ZenFone%20Max%20Pro%20M2&page=1&sort=prc/dc"
@@ -41,12 +58,39 @@ def getbutton(request):
 
     return JsonResponse(quary_data,safe=False)
 
+#------------- function  ------------------
+
+def sign_in(request):
+	email = request.POST['email']
+	password = request.POST['password']
+	user = models.User.objects.get(email=email)
+	if user.password == password :
+		request.session['username']= user.name
+		request.session['useremail']= user.email
+		response = redirect('/')
+	else:
+		response = redirect('/login_page/')
+	return response
+
+def sign_up(request):
+	Name=request.POST['name']
+	Email = request.POST['email']
+	Password = request.POST['password']
+	re_password = request.POST['re_password']
+	if Password == re_password :
+		models.User.objects.create(name=Name,email=Email,password=Password)
+		response = redirect('/login_page/')
+	else:
+		response = redirect('/register_page/')
+	return response
+
+
 def get_brands(request):
 	with connection.cursor() as cursor:
 		cursor.execute("select brands from main_brands")
 		getdata=[item for item in cursor.fetchall()]
 	connection.close()
-	
+
 	brand_data = ""
 	for i in  range(len(getdata)) :
 		brand_data += "<button style=\" margin-bottom:10px;\" class=\"btn btn-primary\" onclick=\"getdatatable(this)\" value=\""+getdata[i][0]+"\">"
@@ -73,7 +117,7 @@ def get_phone_data (request):
 		projects +="</tr>"
 
 	projects +="</tbody> </table> "
-	
+
 	return JsonResponse(projects,safe=False)
 
 def get_new_celllp_data (request):
