@@ -1,1 +1,3 @@
 website/website/settings.py
+website/website/__init__.py
+website/db.sqlite3
