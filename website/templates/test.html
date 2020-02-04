@@ -5,10 +5,10 @@ function getbutton(){
   $.ajax({
           url: '/ajax/getbutton/',
           type: 'GET',
-          data: { text: text },
+          data: { text: '' },
           dataType: 'json',
           success: function (result) {
-            alert(result);
+            $('#alertmsg').html(result);
           },
           cache: false
       });
@@ -69,6 +69,7 @@ function getproductprice(){
   </div>
 </form>
 
-<button class="btn btn-primary" onclick="getbutton()">getbutton</button>
+<button class="btn btn-primary" href="/getbutton/">getbutton</button>
+
 
 {% endblock %}

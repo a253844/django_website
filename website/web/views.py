@@ -3,23 +3,32 @@ import json , re , requests
 from django.http import JsonResponse
 from function.crawler_cellphone import get_sogi_data
 from django.db import connection
+
 from web import models
 
 #-----------------  page  -------------------
+
 def base_page(request, pid=None ,del_pass=None):
 	if 'username' in request.session:
 		username = request.session['username']
-		useremail = request.session['useremail']
 	return render_to_response('base_page.html',locals())
 
 def cell_phone(request):
+	if 'username' in request.session:
+		username = request.session['username']
 	return render_to_response('cell_phone.html',locals())
 
 def test(request):
+	if 'username' in request.session:
+		username = request.session['username']
 	return render_to_response('test.html',locals())
 
 def login_page(request):
-    return render_to_response("login.html",locals())
+	if 'username' in request.session:
+		response = redirect('/')
+	else :
+		response = render_to_response('login.html',locals())
+	return response
 
 def register_page(request):
     return render_to_response("register.html",locals())
@@ -28,6 +37,14 @@ def logout_page(request):
 	response = redirect('/')
 	del request.session['username']
 	return response
+
+def error_page(request):
+    return render_to_response("404_page.html",locals())
+
+def setting_page(request):
+	if 'username' in request.session:
+		username = request.session['username']
+	return render_to_response("setting.html",locals())
 
 #----------------- function test ----------------
 
@@ -54,23 +71,38 @@ def getproductprice(request):
     return JsonResponse(projects,safe=False)
 
 def getbutton(request):
-    quary_data = request.GET.get('text',None)
+	msg ='<div class=\"alert alert-danger\" style=\" margin-top:15px;\" role=\"alert\">'
+	msg += '失敗 ! 請重新操作 ! '
+	msg += '</div>'
+	messag =  '失敗 ! 請重新操作 !帳號或密碼錯誤'
 
-    return JsonResponse(quary_data,safe=False)
+	return render(request , 'test.html' , {"msg":msg})
 
-#------------- function  ------------------
+#-------------User function  ------------------
 
 def sign_in(request):
-	email = request.POST['email']
-	password = request.POST['password']
-	user = models.User.objects.get(email=email)
-	if user.password == password :
-		request.session['username']= user.name
-		request.session['useremail']= user.email
-		response = redirect('/')
+	email = request.GET.get('email',None)
+	password = request.GET.get('password',None)
+	if password == '' or email == '':
+		msg = '<div id = \"displayalert\"  class=\"alert alert-success\" style=\" margin-top:15px;\" role=\"alert\">請輸入帳號密碼 !!</div>',
+		resp = {
+		'msg' : msg,
+		'res' : 0  }
 	else:
-		response = redirect('/login_page/')
-	return response
+		user = models.User.objects.get(email=email)
+		if user.password == password and user.email == email :
+			request.session['username']= user.name
+			request.session['useremail']= user.email
+			resp = {
+			'res' : 1 }
+		else:
+			msg = '<div id = \"displayalert\" class=\"alert alert-success\" style=\" margin-top:15px;\" role=\"alert\">帳號或密碼錯誤 !!</div>'
+			resp = {
+			'msg' : msg ,
+			'res' : 0 }
+
+	return  JsonResponse(resp,safe=False)
+
 
 def sign_up(request):
 	Name=request.POST['name']
@@ -84,6 +116,23 @@ def sign_up(request):
 		response = redirect('/register_page/')
 	return response
 
+def changePW(request):
+	Password = request.POST['password']
+	re_password = request.POST['re_password']
+	if 'username' in request.session:
+		change = models.User.objects.get(name=request.session['username'])
+		change.password = Password
+		change.save()
+		messages.add_message(request, messages.SUCCESS, '密碼更新成功 !')
+		msg ='<div class=\"alert alert-success\" style=\" margin-top:15px;\" role=\"alert\">密碼更新成功 ! </div>'
+		response = redirect('/setting/')
+	else:
+		messages.add_message(request, messages.WARNING, '密碼更新失敗 ! 請重新操作 !')
+		msg ='<div class=\"alert alert-success\" style=\" margin-top:15px;\" role=\"alert\">密碼更新失敗 ! 請重新操作 ! </div>'
+		response = redirect('/setting/')
+	return response
+
+#------------- function  ------------------
 
 def get_brands(request):
 	with connection.cursor() as cursor:

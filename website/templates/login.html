@@ -1,7 +1,28 @@
 <!DOCTYPE html>
 {% extends 'base_page.html' %}
 {% block scripts %}
-
+function getlogin(){
+  var email=document.getElementById("InputEmail").value;
+  var password=document.getElementById("InputPassword").value;
+  $.ajax({
+          url: '/ajax/sign_in/',
+          type: 'GET',
+          data: { email: email , password:password },
+          dataType: 'json',
+          success: function (result) {
+            if(result.res == 0){
+              $('#alertmsg').html(result.msg);
+              setTimeout(function(){
+                $('#displayalert').remove()
+              },5000);
+            }else {
+              var flag = 0
+              window.location.href="/?valus="+flag;
+                  }
+          },
+          cache: false
+      });
+  }
 {% endblock %}
 
 {% block onload %}
@@ -26,13 +47,13 @@
                   <div class="text-center">
                     <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
                   </div>
-                  <form class="user" action='/sign_in/' method="post">
+                  <form class="user" >
                     {% csrf_token %}
                     <div class="form-group">
-                      <input type="email" class="form-control form-control-user" id="exampleInputEmail" name='email' aria-describedby="emailHelp" placeholder="Enter Email Address...">
+                      <input type="email" class="form-control form-control-user" id="InputEmail" name='email' aria-describedby="emailHelp" placeholder="Enter Email Address...">
                     </div>
                     <div class="form-group">
-                      <input type="password" class="form-control form-control-user" id="exampleInputPassword" name='password' placeholder="Password">
+                      <input type="password" class="form-control form-control-user" id="InputPassword" name='password' placeholder="Password">
                     </div>
                     <div class="form-group">
                       <div class="custom-control custom-checkbox small">
@@ -40,23 +61,14 @@
                         <label class="custom-control-label" for="customCheck">Remember Me</label>
                       </div>
                     </div>
-                    <input type='submit' value='Login' class="btn btn-primary btn-user btn-block">
-                      Login
+                    <input type='button' value='Login' class="btn btn-primary btn-user btn-block" onclick="getlogin()" >
                     </input>
                     <hr>
-                    <a href="index.html" class="btn btn-google btn-user btn-block">
-                      <i class="fab fa-google fa-fw"></i> Login with Google
-                    </a>
-                    <a href="index.html" class="btn btn-facebook btn-user btn-block">
-                      <i class="fab fa-facebook-f fa-fw"></i> Login with Facebook
-                    </a>
-                  </form>
-                  <hr>
                   <div class="text-center">
                     <a class="small" href="forgot-password.html">Forgot Password?</a>
                   </div>
                   <div class="text-center">
-                    <a class="small" href="register.html">Create an Account!</a>
+                    <a class="small" href="/register_page/">Create an Account!</a>
                   </div>
                 </div>
               </div>

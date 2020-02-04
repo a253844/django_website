@@ -16,9 +16,9 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 #pages
-from web.views import base_page , test , cell_phone , login_page , register_page , logout_page
+from web.views import base_page , test , cell_phone , login_page , register_page , logout_page , error_page , setting_page
 #functions
-from web.views import getproductprice , getbutton , get_phone_data , get_new_celllp_data , get_brands , sign_in , sign_up 
+from web.views import getproductprice , getbutton , get_phone_data , get_new_celllp_data , get_brands , sign_in , sign_up , changePW
 
 
 urlpatterns = [
@@ -28,9 +28,12 @@ urlpatterns = [
     url(r'^login_page/', login_page),
     url(r'^register_page/', register_page),
     url(r'^logout_page/', logout_page),
+    url(r'^404/', error_page),
+    url(r'^setting/', setting_page),
 
-    url(r'^sign_in/', sign_in),
-    url(r'^sign_up/', sign_up),
+    url(r'^ajax/sign_in/$', sign_in),
+    url(r'^ajax/sign_up/$', sign_up),
+    url(r'^ajax/changePW/$', changePW),
 
     url(r'^ajax/getproductprice/$', getproductprice),
     url(r'^ajax/getbutton/$', getbutton),
