@@ -1,7 +1,48 @@
 <!DOCTYPE html>
 {% extends 'base_page.html' %}
 {% block scripts %}
-
+function getregister(){
+  var Name=document.getElementById("FirstName").value;
+  var Email=document.getElementById("InputEmail").value;
+  var password=document.getElementById("InputPassword").value;
+  var repassword=document.getElementById("RepeatPassword").value;
+  if ( Name == '' | Email == '' | password == '' ){
+    var msg =  '<div id = \"displayalert\" class=\"alert alert-warning\" style=\" margin-top:15px;\" role=\"alert\">資料有空，請確認資料!!</div>'
+    $('#alertmsg').html(msg);
+    setTimeout(function(){
+      $('#displayalert').remove()
+    },5000);
+  }else if (password != repassword){
+    var msg =  '<div id = \"displayalert\" class=\"alert alert-warning\" style=\" margin-top:15px;\" role=\"alert\">密碼錯誤，請確認資料!!</div>'
+    $('#alertmsg').html(msg);
+    setTimeout(function(){
+      $('#displayalert').remove()
+    },5000);
+    document.getElementById("InputPassword").value='';
+    document.getElementById("RepeatPassword").value='';
+  }else{
+    $.ajax({
+            url: '/ajax/sign_up/',
+            type: 'GET',
+            data: { Name:Name , Email: Email , password:password },
+            dataType: 'json',
+            success: function (result) {
+              if(result.res == 0){
+                document.getElementById("InputPassword").value='';
+                document.getElementById("RepeatPassword").value='';
+                $('#alertmsg').html(result.msg);
+                setTimeout(function(){
+                  $('#displayalert').remove()
+                },5000);
+              }else {
+                var flag = 0
+                window.location.href="/login_page/?valus="+flag;
+                    }
+            },
+            cache: false
+        });
+      }
+  }
 {% endblock %}
 
 {% block onload %}
@@ -20,23 +61,23 @@
             <div class="text-center">
               <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
             </div>
-            <form class="user" action='/sign_up/' method="post">
+            <form class="user" >
               {% csrf_token %}
               <div class="form-group">
-                  <input type="text" class="form-control form-control-user" id="exampleFirstName" name='name' placeholder="User Name">
+                  <input type="text" class="form-control form-control-user" id="FirstName" name='name' placeholder="User Name">
               </div>
               <div class="form-group">
-                <input type="email" class="form-control form-control-user" id="exampleInputEmail" name='email' placeholder="Email Address">
+                <input type="email" class="form-control form-control-user" id="InputEmail" name='email' placeholder="Email Address">
               </div>
               <div class="form-group row">
                 <div class="col-sm-6 mb-3 mb-sm-0">
-                  <input type="password" class="form-control form-control-user" id="exampleInputPassword" name='password' placeholder="Password">
+                  <input type="password" class="form-control form-control-user" id="InputPassword" name='password' placeholder="Password">
                 </div>
                 <div class="col-sm-6">
-                  <input type="password" class="form-control form-control-user" id="exampleRepeatPassword" name='re_password' placeholder="Repeat Password">
+                  <input type="password" class="form-control form-control-user" id="RepeatPassword" name='re_password' placeholder="Repeat Password">
                 </div>
               </div>
-              <input type='submit' value='Register' class="btn btn-primary btn-user btn-block">
+              <input type='button' value='Register' class="btn btn-primary btn-user btn-block"  onclick="getregister()">
               </input>
               <hr>
             <div class="text-center">

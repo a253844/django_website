@@ -11,7 +11,7 @@ from web import models
 def base_page(request, pid=None ,del_pass=None):
 	if 'username' in request.session:
 		username = request.session['username']
-	return render_to_response('base_page.html',locals())
+	return render_to_response('index.html',locals())
 
 def cell_phone(request):
 	if 'username' in request.session:
@@ -84,19 +84,25 @@ def sign_in(request):
 	email = request.GET.get('email',None)
 	password = request.GET.get('password',None)
 	if password == '' or email == '':
-		msg = '<div id = \"displayalert\"  class=\"alert alert-success\" style=\" margin-top:15px;\" role=\"alert\">請輸入帳號密碼 !!</div>',
+		msg = '<div id = \"displayalert\"  class=\"alert alert-warning\" style=\" margin-top:15px;\" role=\"alert\">請輸入帳號密碼 !!</div>',
 		resp = {
 		'msg' : msg,
 		'res' : 0  }
 	else:
-		user = models.User.objects.get(email=email)
-		if user.password == password and user.email == email :
-			request.session['username']= user.name
-			request.session['useremail']= user.email
-			resp = {
-			'res' : 1 }
-		else:
-			msg = '<div id = \"displayalert\" class=\"alert alert-success\" style=\" margin-top:15px;\" role=\"alert\">帳號或密碼錯誤 !!</div>'
+		try:
+			user = models.User.objects.get(email=email)
+			if user.password == password and user.email == email :
+				request.session['username']= user.name
+				request.session['useremail']= user.email
+				resp = {
+				'res' : 1 }
+			else:
+				msg = '<div id = \"displayalert\" class=\"alert alert-warning\" style=\" margin-top:15px;\" role=\"alert\">密碼錯誤，請重新確認 !!</div>'
+				resp = {
+				'msg' : msg ,
+				'res' : 0 }
+		except:
+			msg = '<div id = \"displayalert\" class=\"alert alert-warning\" style=\" margin-top:15px;\" role=\"alert\">無此帳號，請重新輸入 !!</div>'
 			resp = {
 			'msg' : msg ,
 			'res' : 0 }
@@ -105,16 +111,22 @@ def sign_in(request):
 
 
 def sign_up(request):
-	Name=request.POST['name']
-	Email = request.POST['email']
-	Password = request.POST['password']
-	re_password = request.POST['re_password']
-	if Password == re_password :
+	Name = request.GET.get('Name',None)
+	Email = request.GET.get('Email',None)
+	Password = request.GET.get('password',None)
+	try :
+		user = models.User.objects.get(email=Email)
+		if user != '':
+			msg = '<div id = \"displayalert\" class=\"alert alert-warning\" style=\" margin-top:15px;\" role=\"alert\">帳號已註冊 !!</div>'
+			resp = {
+			'msg' : msg ,
+			'res' : 0 }
+	except :
 		models.User.objects.create(name=Name,email=Email,password=Password)
-		response = redirect('/login_page/')
-	else:
-		response = redirect('/register_page/')
-	return response
+		resp = {
+		'res' : 1
+		}
+	return JsonResponse(resp,safe=False)
 
 def changePW(request):
 	Password = request.POST['password']

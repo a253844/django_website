@@ -22,23 +22,13 @@
   <script type="text/javascript">
 
   {% block scripts %}
-  function alertmsg(){
-    var url=window.location.search;
-    if(url.indexOf("?")!=-1){
-      var username=document.getElementById("useraccount").innerHTML;
-      var msg_login = '<div class=\"alert alert-success\" style=\" margin-top:15px;\" role=\"alert\">歡迎回來 '+ username +' !!</div>'
-      $('#alertmsg').html(msg_login);
-      setTimeout(function(){
-        $('#alertmsg').remove()
-      },8000);
-      }
-  }
+  
   {% endblock %}
   </script>
 
 </head>
 
-<body id="page-top" {% block onload %} onload=alertmsg(){% endblock %}>
+<body id="page-top" {% block onload %} {% endblock %}>
 
   <!-- Page Wrapper -->
   <div id="wrapper">

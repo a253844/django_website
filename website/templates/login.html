@@ -23,10 +23,20 @@ function getlogin(){
           cache: false
       });
   }
+  function alertmsg(){
+    var url=window.location.search;
+    if(url.indexOf("?")!=-1){
+      var msg_login = '<div id = \"displayalert\" class=\"alert alert-success\" style=\" margin-top:15px;\" role=\"alert\">註冊成功，請登入!!</div>'
+      $('#alertmsg').html(msg_login);
+      setTimeout(function(){
+        $('#displayalert').remove()
+      },8000);
+      }
+  }
 {% endblock %}
 
 {% block onload %}
-
+  onload = alertmsg()
 {% endblock %}
 
 {% block content %}

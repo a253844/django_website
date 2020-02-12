@@ -1,3 +1,7 @@
 website/website/settings.py
 website/website/__init__.py
 website/db.sqlite3
+website/static/images/account-photos-icon.jpg
+website/function/__pycache__
+website/web/__pycache__
+website/website/__pycache__
