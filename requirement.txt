@@ -1,6 +1,4 @@
 django==5.1.4
-mysql-connector==2.2.9
+mysqlclient==2.2.6
 requests==2.32.3
 beautifulsoup4==4.12.3
-
-
