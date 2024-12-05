@@ -1,4 +1,16 @@
 
+/*後台網站管理員*/
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    user_type ENUM('admin', 'user', 'guest') NOT NULL,
+    is_enable ENUM('true', 'false') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 /*病患個人資料*/
 CREATE TABLE patients (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -16,13 +28,15 @@ CREATE TABLE patients (
 /*醫師個人資料*/
 CREATE TABLE doctors (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     specialty VARCHAR(100) NOT NULL,
     phone_number VARCHAR(20),
     email VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+    update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 /*病患就醫紀錄*/
@@ -65,16 +79,3 @@ CREATE TABLE schedules (
     FOREIGN KEY (doctor_id) REFERENCES doctors(id)
 );
 
-/*後台網站管理員*/
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    doctor_id INT NOT NULL,
-    username VARCHAR(100) NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,s
-    user_type ENUM('admin', 'user', 'guest') NOT NULL,
-    is_enable ENUM('true', 'false') NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY(doctor_id) REFERENCES doctors(id)
-);

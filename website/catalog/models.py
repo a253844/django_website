@@ -9,6 +9,7 @@ from django.db import models
 
 
 class Doctors(models.Model):
+    user = models.ForeignKey('Users', models.DO_NOTHING)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     specialty = models.CharField(max_length=100)
@@ -81,7 +82,6 @@ class TreatmentCosts(models.Model):
 
 
 class Users(models.Model):
-    doctor = models.ForeignKey(Doctors, models.DO_NOTHING)
     username = models.CharField(max_length=100)
     password_hash = models.CharField(max_length=255)
     email = models.CharField(max_length=255)

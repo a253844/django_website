@@ -1,7 +1,6 @@
 from django.urls import path
-from . import views
-
+from . import tests
 
 urlpatterns = [
-
+    path('test/', tests.testdb),
 ]
