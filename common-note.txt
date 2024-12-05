@@ -1,0 +1,11 @@
+//同步資料庫
+python manage.py inspectdb > catalog/models.py
+
+//創建應用程序遷移
+python manage.py makemigrations
+
+//實施應用程序遷移
+python manage.py migrate
+
+// 運行站台
+python manage.py runserver
