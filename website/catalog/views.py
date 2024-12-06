@@ -1,9 +1,5 @@
 from django.shortcuts import render
-from catalog.models import Doctors
-from catalog.models import MedicalRecords
-from catalog.models import Patients
-from catalog.models import TreatmentCosts
-from catalog.models import Schedules
+from catalog.models import Doctors, MedicalRecords, Patients, TreatmentCosts, Schedules
 from django.http import HttpResponse 
 
 # Create your views here.
