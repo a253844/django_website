@@ -24,3 +24,11 @@ def crypto_MD5(str):
     crypto = hashlib.md5()
     crypto.update(str.encode('utf-8'))
     return crypto.hexdigest()
+
+def getadmin(request):
+    response = ""
+    admin = Users.objects.filter(user_type="admin")
+    for var in admin:
+        response += var.username + " "
+
+    return HttpResponse("<p>" + response + "</p>")
